@@ -7,25 +7,32 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 public class BookListActivity extends AppCompatActivity {
 
     private ProgressBar mLoadingProgress;
+    private RecyclerView rvBooks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
         mLoadingProgress = findViewById(R.id.pb_loading);
+        rvBooks = findViewById(R.id.rv_books);
+        LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this,
+            RecyclerView.VERTICAL, false);
+        rvBooks.setLayoutManager(booksLayoutManager);
         try {
-            URL url = ApiUtil.buildUrl("cooking");
+            URL url = ApiUtil.buildUrl("java");
             new BooksQueryTask().execute(url);
         } catch (Exception e) {
             Log.d("error" , e.getMessage());
         }
-
     }
 
     public class BooksQueryTask extends AsyncTask<URL, Void, String> {
@@ -54,16 +61,18 @@ public class BookListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            TextView tvResult = findViewById(R.id.tvResponse);
             TextView tvError = findViewById(R.id.tvError);
             if (result == null) {
-                tvResult.setVisibility(View.INVISIBLE);
+                rvBooks.setVisibility(View.INVISIBLE);
                 tvError.setVisibility(View.VISIBLE);
             } else {
-                tvResult.setVisibility(View.VISIBLE);
+                rvBooks.setVisibility(View.VISIBLE);
                 tvError.setVisibility(View.INVISIBLE);
             }
-            tvResult.setText(result);
+
+            ArrayList<Book> books = ApiUtil.getBookFromJson(result);
+            BookAdapter adapter = new BookAdapter(books);
+            rvBooks.setAdapter(adapter);
             mLoadingProgress.setVisibility(View.INVISIBLE);
         }
 
