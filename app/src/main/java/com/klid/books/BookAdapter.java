@@ -1,6 +1,7 @@
 package com.klid.books;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         return books.size();
     }
 
-    public class BookViewHolder extends RecyclerView.ViewHolder {
+    public class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tvTitle;
         TextView tvAuthors;
@@ -51,22 +52,23 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             tvAuthors = itemView.findViewById(R.id.tvAuthors);
             tvPublisher = itemView.findViewById(R.id.tvPublisher);
             tvDate = itemView.findViewById(R.id.tvDate);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Book book) {
             tvTitle.setText(book.title);
-            StringBuilder authors = new StringBuilder();
-            int i = 0;
-            for (String author : book.authors) {
-                authors.append(author);
-                i++;
-                if (i < book.authors.length) {
-                    authors.append(", ");
-                }
-            }
-            tvAuthors.setText(authors);
+            tvAuthors.setText(book.authors);
             tvPublisher.setText(book.publisher);
             tvDate.setText(book.publishedDate);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+            Book selectedBook = books.get(position);
+            Intent intent = new Intent(view.getContext(), BookDetailActivity.class);
+            intent.putExtra("Book", selectedBook);
+            view.getContext().startActivity(intent);
         }
     }
 

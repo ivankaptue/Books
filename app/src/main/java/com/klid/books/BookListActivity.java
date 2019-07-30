@@ -55,7 +55,6 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         }catch (Exception e) {
             Log.e("error", e.getMessage());
         }
-
         return false;
     }
 
