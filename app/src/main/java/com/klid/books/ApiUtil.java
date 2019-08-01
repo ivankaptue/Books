@@ -23,7 +23,7 @@ public class ApiUtil {
     public static final String BASE_API_URL =
         "https://www.googleapis.com/books/v1/volumes";
     public static final String KEY = "KEY";
-    public static final String API_KEY = "AIzaSyCdchFoKK9y1nwuQm4kKHOh_6go4KstkfA";
+    public static final String API_KEY = "";
     public static final String SEARCH_TITLE = "intitle:";
     public static final String SEARCH_AUTHOR = "inauthor:";
     public static final String SEARCH_PUBLISHER = "inpublisher:";
