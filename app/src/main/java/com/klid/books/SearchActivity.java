@@ -1,5 +1,6 @@
 package com.klid.books;
 
+import android.content.Context;
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,6 +31,19 @@ public class SearchActivity extends AppCompatActivity {
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             } else {
                 URL queryUrl = ApiUtil.buildUrl(title, author, publisher, isbn);
+                // preferences
+                Context context = getApplicationContext();
+                int position = SpUtil.getPreferenceInt(context, SpUtil.POSITION);
+                if (position == 0 || position == 5) {
+                    position = 1;
+                } else {
+                    position++;
+                }
+                String key = SpUtil.QUERY + position;
+                String value = title + "," + author + "," + publisher + "," + isbn;
+                SpUtil.setPreferenceString(context, key, value);
+                SpUtil.setPreferenceInt(context, SpUtil.POSITION, position);
+
                 Intent intent = new Intent(this, BookListActivity.class);
                 intent.putExtra("Query", queryUrl);
                 startActivity(intent);

@@ -54,6 +54,13 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
+
+        ArrayList<String> recentList = SpUtil.getQueryList(getApplicationContext());
+        int itemNum = recentList.size();
+        for (int i = 0; i < itemNum; i++) {
+             menu.add(Menu.NONE, i, Menu.NONE, recentList.get(i));
+        }
+
         return true;
     }
 
@@ -66,6 +73,20 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
                 startActivity(intent);
                 return true;
             default:
+                int position = item.getItemId() + 1;
+                String preferenceName = SpUtil.QUERY + position;
+                String query = SpUtil.getPreferenceString(getApplicationContext(), preferenceName);
+                String[] prefParams = query.split(",");
+                String[] queryParams = new String[4];
+                System.arraycopy(prefParams, 0, queryParams, 0, prefParams.length);
+                URL bookUrl = ApiUtil.buildUrl(
+                    (queryParams[0] == null) ? "" : queryParams[0],
+                    (queryParams[1] == null) ? "" : queryParams[1],
+                    (queryParams[2] == null) ? "" : queryParams[2],
+                    (queryParams[3] == null) ? "" : queryParams[3]
+                );
+                new BooksQueryTask().execute(bookUrl);
+
                 return super.onOptionsItemSelected(item);
         }
 
