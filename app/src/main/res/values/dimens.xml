@@ -5,4 +5,6 @@
 	<dimen name="published_date_padding">8dp</dimen>
 	<dimen name="item_vertical_margin">10dp</dimen>
 	<dimen name="standard_margin">16dp</dimen>
+	<dimen name="margin_search_actvity">24dp</dimen>
+	<dimen name="search_button_text_size">18sp</dimen>
 </resources>

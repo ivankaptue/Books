@@ -1,5 +1,6 @@
 package com.klid.books;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,12 +29,20 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         setContentView(R.layout.activity_book_list);
         mLoadingProgress = findViewById(R.id.pb_loading);
         rvBooks = findViewById(R.id.rv_books);
+
+        URL queryURL = (URL) getIntent().getSerializableExtra("Query");
+
         LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this,
             RecyclerView.VERTICAL, false);
         rvBooks.setLayoutManager(booksLayoutManager);
+        URL bookUrl;
         try {
-            URL url = ApiUtil.buildUrl("java");
-            new BooksQueryTask().execute(url);
+            if (queryURL == null) {
+                bookUrl = ApiUtil.buildUrl("android programming");
+            } else {
+                bookUrl = queryURL;
+            }
+            new BooksQueryTask().execute(bookUrl);
         } catch (Exception e) {
             Log.d("error", e.getMessage());
         }
@@ -48,11 +58,25 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_advanced_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String query) {
         try {
             URL bookUrl = ApiUtil.buildUrl(query);
             new BooksQueryTask().execute(bookUrl);
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.e("error", e.getMessage());
         }
         return false;
